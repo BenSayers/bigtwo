@@ -1,0 +1,17 @@
+{
+  "name": "bigtwo",
+  "version": "0.0.0",
+  "homepage": "https://github.com/BenSayers/bigtwo.git",
+  "authors": [
+    "Ben Sayers"
+  ],
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "jquery": "~2.1.1"
+  },
+  "devDependencies": {
+    "jasmine-jquery": "~2.0.3",
+    "squire": "~0.2.0"
+  }
+}
