@@ -41,6 +41,9 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('bower.json'),
+        clean: {
+            buildOutput: ['build-output']
+        },
         karma: {
             options: {
                 configFile: 'test/support/karma.config.js',
@@ -73,6 +76,8 @@ module.exports = function (grunt) {
         },
         requirejs: {
             options: {
+                baseUrl: 'src/js',
+                include: ['requirejs'],
                 mainConfigFile: 'src/js/require.config.js',
                 name: 'bigtwo',
                 wrap: {
@@ -81,7 +86,14 @@ module.exports = function (grunt) {
             },
             minified: {
                 options: {
-                    out: 'build/bigtwo.min.js'
+                    out: 'build-output/website/js/bigtwo.min.js'
+                }
+            }
+        },
+        cssmin: {
+            minified: {
+                files: {
+                    'build-output/website/css/bigtwo.min.css': ['src/css/site.css']
                 }
             }
         },
@@ -96,12 +108,9 @@ module.exports = function (grunt) {
             }
         },
         copy: {
-            release: {
-                expand: true,
-                cwd: 'build/',
-                flatten: true,
-                src: '*',
-                dest: 'dist/'
+            html: {
+                src: 'src/index-minified.html',
+                dest: 'build-output/website/index.html'
             }
         },
         bump: {
@@ -117,19 +126,21 @@ module.exports = function (grunt) {
     });
 
     grunt.loadNpmTasks('grunt-bump');
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-karma');
 
-    grunt.registerTask('build', ['jshint:source', 'requirejs:minified'])
+    grunt.registerTask('build', ['jshint:source', 'clean:buildOutput', 'cssmin:minified', 'requirejs:minified', 'copy:html']);
     grunt.registerTask('test', ['karma:unit']);
     grunt.registerTask('watch', ['karma:watch']);
     grunt.registerTask('release', function(versionType) {
         versionType = versionType || 'patch';
         grunt.task.run(['bump-only:' + versionType, 'build', 'test', 'bump-commit']);
     });
-    grunt.registerTask('ci', ['build', 'test', 'karma:windows', 'karma:mac']);
-    grunt.registerTask('default', ['build', 'test']);
+    grunt.registerTask('ci', ['test', 'build', 'karma:windows', 'karma:mac']);
+    grunt.registerTask('default', ['test', 'build']);
 };
