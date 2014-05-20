@@ -122,11 +122,27 @@ module.exports = function (grunt) {
                 tagName: '%VERSION%',
                 pushTo: 'origin'
             }
+        },
+        connect: {
+            devServer: {
+                options: {
+                    port: 3000,
+                    base: ['src', '.']
+                }
+            },
+            prodServer: {
+                options: {
+                    port: 4000,
+                    base: 'build-output/website',
+                    keepalive: true
+                }
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-bump');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -136,7 +152,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', ['jshint:source', 'clean:buildOutput', 'cssmin:minified', 'requirejs:minified', 'copy:html']);
     grunt.registerTask('test', ['karma:unit']);
-    grunt.registerTask('watch', ['karma:watch']);
+    grunt.registerTask('watch', ['connect:devServer', 'karma:watch']);
     grunt.registerTask('release', function(versionType) {
         versionType = versionType || 'patch';
         grunt.task.run(['bump-only:' + versionType, 'build', 'test', 'bump-commit']);
