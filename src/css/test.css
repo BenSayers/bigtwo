@@ -1,3 +1,11 @@
 body {
     background-color: #F8F8F8;
 }
+
+h1:after {
+    content: '';
+    display: block;
+    background-image: url('../img/test.png');
+    height: 250px;
+    width: 200px;
+}
