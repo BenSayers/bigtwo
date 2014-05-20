@@ -81,7 +81,7 @@ module.exports = function (grunt) {
                 mainConfigFile: 'src/js/require.config.js',
                 name: 'bigtwo',
                 wrap: {
-                    start: '/*! bigtwo v<%= pkg.version %> | (c) 2014 <%= pkg.authors.join(", ") %> | Released under the MIT licence */\n'
+                    start: '/*! bigtwo | (c) 2014 <%= pkg.authors.join(", ") %> | Released under the MIT licence */\n'
                 }
             },
             minified: {
@@ -137,6 +137,17 @@ module.exports = function (grunt) {
                     keepalive: true
                 }
             }
+        },
+        filerev: {
+            assets: {
+                src: ['build-output/website/js/bigtwo.min.js', 'build-output/website/css/bigtwo.min.css']
+            }
+        },
+        usemin: {
+            html: 'build-output/website/index.html',
+            options: {
+                assetsDirs: ['build-output/website']
+            }
         }
     });
 
@@ -148,11 +159,14 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-exec');
+    grunt.loadNpmTasks('grunt-filerev');
     grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-usemin');
 
-    grunt.registerTask('build', ['jshint:source', 'clean:buildOutput', 'cssmin:minified', 'requirejs:minified', 'copy:html']);
+    grunt.registerTask('build', ['jshint:source', 'clean:buildOutput', 'cssmin:minified', 'requirejs:minified', 'copy:html', 'filerev:assets', 'usemin:html']);
     grunt.registerTask('test', ['karma:unit']);
     grunt.registerTask('watch', ['connect:devServer', 'karma:watch']);
+    grunt.registerTask('server', ['build', 'connect:prodServer']);
     grunt.registerTask('release', function(versionType) {
         versionType = versionType || 'patch';
         grunt.task.run(['bump-only:' + versionType, 'build', 'test', 'bump-commit']);
