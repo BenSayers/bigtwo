@@ -148,6 +148,16 @@ module.exports = function (grunt) {
             options: {
                 assetsDirs: ['build-output/website']
             }
+        },
+        replace: {
+            versionInHtml: {
+                src: ['build-output/website/index.html'],
+                overwrite: true,
+                replacements: [{
+                    from: '{{version}}',
+                    to: '<%= pkg.version %>'
+                }]
+            }
         }
     });
 
@@ -161,9 +171,10 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-filerev');
     grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-text-replace');
     grunt.loadNpmTasks('grunt-usemin');
 
-    grunt.registerTask('build', ['jshint:source', 'clean:buildOutput', 'cssmin:minified', 'requirejs:minified', 'copy:html', 'filerev:assets', 'usemin:html']);
+    grunt.registerTask('build', ['jshint:source', 'clean:buildOutput', 'cssmin:minified', 'requirejs:minified', 'copy:html', 'filerev:assets', 'usemin:html', 'replace:versionInHtml']);
     grunt.registerTask('test', ['karma:unit']);
     grunt.registerTask('watch', ['connect:devServer', 'karma:watch']);
     grunt.registerTask('server', ['build', 'connect:prodServer']);
