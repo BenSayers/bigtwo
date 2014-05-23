@@ -36,6 +36,9 @@
     "grunt-contrib-connect": "^0.7.1",
     "grunt-filerev": "^0.2.1",
     "grunt-usemin": "^2.1.1",
-    "grunt-text-replace": "^0.3.11"
+    "grunt-text-replace": "^0.3.11",
+    "grunt-react": "^0.8.2",
+    "react-tools": "^0.10.0",
+    "karma-react-preprocessor": "0.0.2"
   }
 }

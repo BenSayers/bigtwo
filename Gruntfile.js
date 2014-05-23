@@ -76,9 +76,9 @@ module.exports = function (grunt) {
         },
         requirejs: {
             options: {
-                baseUrl: 'src/js',
+                baseUrl: 'build-output/js',
                 include: ['requirejs'],
-                mainConfigFile: 'src/js/require.config.js',
+                mainConfigFile: 'build-output/js/require.config.js',
                 name: 'bigtwo',
                 wrap: {
                     start: '/*! bigtwo | (c) 2014 <%= pkg.authors.join(", ") %> | Released under the MIT licence */\n'
@@ -118,6 +118,12 @@ module.exports = function (grunt) {
                 flatten: true,
                 src: '*',
                 dest: 'build-output/website/img/'
+            },
+            js: {
+                expand: true,
+                cwd: 'src/js',
+                src: '**/*',
+                dest: 'build-output/js'
             }
         },
         bump: {
@@ -134,7 +140,7 @@ module.exports = function (grunt) {
             devServer: {
                 options: {
                     port: 3000,
-                    base: ['src', '.']
+                    base: ['src', '.', 'build-output']
                 }
             },
             prodServer: {
@@ -166,7 +172,21 @@ module.exports = function (grunt) {
                     to: '<%= pkg.version %>'
                 }]
             }
-        }
+        },
+        react: {
+            compile: {
+              files: [
+                {
+                  expand: true,
+                  cwd: 'src/js',
+                  src: ['**/*.jsx'],
+                  dest: 'build-output/js',
+                  ext: '.js'
+                }
+              ]
+            }
+          }
+
     });
 
     grunt.loadNpmTasks('grunt-bump');
@@ -179,10 +199,11 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-filerev');
     grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-react');
     grunt.loadNpmTasks('grunt-text-replace');
     grunt.loadNpmTasks('grunt-usemin');
 
-    grunt.registerTask('build', ['jshint:source', 'clean:buildOutput', 'cssmin:minified', 'requirejs:minified', 'copy:html', 'copy:img', 'filerev:assets', 'usemin:html', 'usemin:css', 'replace:versionInHtml']);
+    grunt.registerTask('build', ['jshint:source', 'clean:buildOutput', 'cssmin:minified', 'copy:js', 'react:compile', 'requirejs:minified', 'copy:html', 'copy:img', 'filerev:assets', 'usemin:html', 'usemin:css', 'replace:versionInHtml']);
     grunt.registerTask('test', ['karma:unit']);
     grunt.registerTask('watch', ['connect:devServer', 'karma:watch']);
     grunt.registerTask('server', ['build', 'connect:prodServer']);

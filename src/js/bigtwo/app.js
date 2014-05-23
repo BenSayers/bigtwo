@@ -1,7 +1,7 @@
-define(['jquery'], function () {
+define(['bigtwo/helloWorld', 'react'], function (helloWorld, React) {
     return {
         start: function ($target) {
-            $target.append('<h1>Hello World</h1>');
+            React.renderComponent(helloWorld({}), $target[0]);
         }
     };
 });

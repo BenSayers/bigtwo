@@ -5,14 +5,15 @@ module.exports = function (config) {
         captureTimeout: 120000,
         files: [
             'src/js/require.config.js',
-            'bower_components/jquery/dist/jquery.js',
-            'bower_components/jasmine-jquery/lib/jasmine-jquery.js',
             'test/support/test-runner.js',
-            {pattern: 'src/**/*.js', included: false},
-            {pattern: 'test/**/*.js', included: false},
+            {pattern: 'src/**/*.*', included: false},
+            {pattern: 'test/**/*.*', included: false},
             {pattern: 'bower_components/**/*.js', included: false}
         ],
         frameworks: ['requirejs', 'jasmine'],
+        preprocessors: {
+            '**/*.jsx': ['react']
+        },
         reporters: ['dots']
     });
 };

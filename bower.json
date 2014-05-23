@@ -9,10 +9,12 @@
   "private": true,
   "dependencies": {
     "jquery": "~2.1.1",
-    "requirejs": "~2.1.11"
+    "requirejs": "~2.1.11",
+    "react": "~0.10.0"
   },
   "devDependencies": {
     "jasmine-jquery": "~2.0.3",
-    "squire": "~0.2.0"
+    "squire": "~0.2.0",
+    "es5-shim": "~3.4.0"
   }
 }
