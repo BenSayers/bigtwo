@@ -126,16 +126,6 @@ module.exports = function (grunt) {
                 dest: 'build-output/js'
             }
         },
-        bump: {
-            options: {
-                files: ['bower.json'],
-                updateConfigs: ['pkg'],
-                commitMessage: 'Release %VERSION%',
-                commitFiles: ['-a'],
-                tagName: '%VERSION%',
-                pushTo: 'origin'
-            }
-        },
         connect: {
             devServer: {
                 options: {
@@ -167,29 +157,51 @@ module.exports = function (grunt) {
             versionInHtml: {
                 src: ['build-output/website/index.html'],
                 overwrite: true,
-                replacements: [{
-                    from: '{{version}}',
-                    to: '<%= pkg.version %>'
-                }]
+                replacements: [
+                    {
+                        from: '{{version}}',
+                        to: '<%= gitinfo.local.branch.current.shortSHA %>'
+                    }
+                ]
             }
         },
         react: {
             compile: {
-              files: [
-                {
-                  expand: true,
-                  cwd: 'src/js',
-                  src: ['**/*.jsx'],
-                  dest: 'build-output/js',
-                  ext: '.js'
-                }
-              ]
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'src/js',
+                        src: ['**/*.jsx'],
+                        dest: 'build-output/js',
+                        ext: '.js'
+                    }
+                ]
             }
-          }
+        },
+        'bitbucket-pages': {
+            options: {
+                baseDirectory: 'build-output/website',
+                repository: 'git@bitbucket.org:bpsayers/bpsayers.bitbucket.org.git'
+            },
+            publish: {
+                options: {
+                    siteName: 'bigtwo-' + process.env.TRAVIS_BRANCH
+                },
+                src: ['build-output/website/*']
+            },
+            publishProduction: {
+                options: {
+                    siteName: 'bigtwo'
+                },
+                src: ['build-output/website/*']
+            }
+        },
+        gitinfo: {
 
+        }
     });
 
-    grunt.loadNpmTasks('grunt-bump');
+    grunt.loadNpmTasks('grunt-bitbucket-pages');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-copy');
@@ -198,19 +210,18 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-filerev');
+    grunt.loadNpmTasks('grunt-gitinfo');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-react');
     grunt.loadNpmTasks('grunt-text-replace');
     grunt.loadNpmTasks('grunt-usemin');
 
-    grunt.registerTask('build', ['jshint:source', 'clean:buildOutput', 'cssmin:minified', 'copy:js', 'react:compile', 'requirejs:minified', 'copy:html', 'copy:img', 'filerev:assets', 'usemin:html', 'usemin:css', 'replace:versionInHtml']);
+    grunt.registerTask('build', ['gitinfo', 'jshint:source', 'clean:buildOutput', 'cssmin:minified', 'copy:js', 'react:compile', 'requirejs:minified', 'copy:html', 'copy:img', 'filerev:assets', 'usemin:html', 'usemin:css', 'replace:versionInHtml']);
     grunt.registerTask('test', ['karma:unit']);
     grunt.registerTask('watch', ['connect:devServer', 'karma:watch']);
     grunt.registerTask('server', ['build', 'connect:prodServer']);
-    grunt.registerTask('release', function(versionType) {
-        versionType = versionType || 'patch';
-        grunt.task.run(['bump-only:' + versionType, 'build', 'test', 'bump-commit']);
-    });
     grunt.registerTask('ci', ['test', 'build', 'karma:windows', 'karma:mac']);
+    grunt.registerTask('deploy', ['build', 'bitbucket-pages:publish']);
+    grunt.registerTask('deploy-production', ['build', 'bitbucket-pages:publishProduction']);
     grunt.registerTask('default', ['test', 'build']);
 };
