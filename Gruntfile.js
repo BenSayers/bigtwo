@@ -6,6 +6,8 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.loadTasks('grunt/tasks');
+
     grunt.renameTask('watch', 'grunt-contrib-watch');
 
     grunt.registerTask('build', [
@@ -28,7 +30,5 @@ module.exports = function (grunt) {
     grunt.registerTask('watchIntegrationTest', ['grunt-contrib-watch:integrationTest']);
     grunt.registerTask('server', ['build', 'connect:prodServerKeepAlive']);
     grunt.registerTask('ci', ['test', 'karma:windows', 'karma:mac']);
-    grunt.registerTask('deploy', ['build', 'bitbucket-pages:publish']);
-    grunt.registerTask('deploy-production', ['build', 'bitbucket-pages:publishProduction']);
     grunt.registerTask('default', ['test']);
 };
